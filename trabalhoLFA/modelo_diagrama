@@ -1,0 +1,15 @@
+// Representação Gráfica do Modelo
+digraph {
+	s0 [label=s0]
+	s1 [label=s1]
+	s0 -> s1 [label="a^n"]
+	s1 [label=s1]
+	s2 [label=s2]
+	s1 -> s2 [label="a^n"]
+	s2 [label=s2]
+	s3 [label=s3]
+	s2 -> s3 [label="b+"]
+	s3 [label=s3]
+	s4 [label=s4]
+	s3 -> s4 [label="c*"]
+}
