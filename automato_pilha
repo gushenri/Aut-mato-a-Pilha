@@ -1,0 +1,9 @@
+digraph {
+	q0 [shape=circle]
+	q1 [shape=circle]
+	qf [shape=doublecircle]
+	q0 -> q0 [label="a; empilha A"]
+	q0 -> q1 [label="b; transita"]
+	q1 -> q1 [label="b; desempilha A"]
+	"" -> q0 [label="início"]
+}
