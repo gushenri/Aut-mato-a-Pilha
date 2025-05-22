@@ -1,9 +1,0 @@
-// Representação Gráfica do Modelo
-digraph {
-	s0 [label=s0]
-	s1 [label=s1]
-	s0 -> s1 [label="a+"]
-	s1 [label=s1]
-	s2 [label=s2]
-	s1 -> s2 [label="b*"]
-}
