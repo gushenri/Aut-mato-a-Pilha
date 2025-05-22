@@ -1,20 +1,28 @@
-from enum import Enum, auto
-from typing import List
-from graphviz import Digraph
+#Q → Conjunto de estados.
+#Σ → Alfabeto de entrada (conjunto de símbolos que a máquina pode ler).
+#Γ → Alfabeto da pilha (símbolos que podem ser empilhados/desempilhados).
+#δ → Função de transição: define para cada estado, símbolo de entrada, e símbolo do topo da pilha, qual a ação a ser tomada (novo estado e manipulação da pilha).
+#q₀ → Estado inicial.
+#Z₀ → Símbolo inicial da pilha.
+#F → Conjunto de estados finais (opcional, depende se a aceitação é por estado ou esvaziamento da pilha).
 
-class Padrao(Enum):
+from enum import Enum, auto #ajuda as enumerações - Padrao
+from typing import List    #listar
+from graphviz import Digraph #fazer imagemzinha
+
+class Padrao(Enum):  #entende as entradas 
     SIMPLES = auto()
     REPETIDO = auto()
     OPCIONAL = auto()
     MULTIPLO = auto()
     INVERSO = auto()
 
-class Segmento:
+class Segmento: #categorisa qual op é e o simbolo
     def __init__(self, categoria: Padrao, simbolo: str):
         self.categoria = categoria
         self.simbolo = simbolo
 
-def decodificar_expressao(expressao: str) -> List[Segmento]:
+def decodificar_expressao(expressao: str) -> List[Segmento]:  #classificação dos simbolos e suas operacoes
     estrutura = []
     indice = 0
     while indice < len(expressao):
@@ -49,7 +57,7 @@ def mostrar_estrutura(estrutura: List[Segmento]):
         print(f"{bloco.simbolo}{marca}", end=" | ")
     print()
 
-def avaliar_sequencia(entrada: str, estrutura: List[Segmento], detalhado: bool = False) -> bool:
+def avaliar_sequencia(entrada: str, estrutura: List[Segmento], detalhado: bool = False) -> bool: #validação da sequencia
     cursor = 0
     suporte = []
     for etapa, bloco in enumerate(estrutura):
@@ -89,7 +97,7 @@ def avaliar_sequencia(entrada: str, estrutura: List[Segmento], detalhado: bool =
         if detalhado: print("❌ Análise falhou!")
         return False
 
-def gerar_diagrama(estrutura: List[Segmento], nome_saida='modelo_diagrama'):
+def gerar_diagrama(estrutura: List[Segmento], nome_saida='modelo_diagrama'): #gera um diagrama
     grafo = Digraph(comment='Representação Gráfica do Modelo')
     for pos, bloco in enumerate(estrutura):
         rotulo = f"{bloco.simbolo}"
