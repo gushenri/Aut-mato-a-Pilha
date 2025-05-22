@@ -60,41 +60,86 @@ def mostrar_estrutura(estrutura: List[Segmento]):
 def avaliar_sequencia(entrada: str, estrutura: List[Segmento], detalhado: bool = False) -> bool: #validação da sequencia
     cursor = 0
     suporte = []
-    for etapa, bloco in enumerate(estrutura):
+    etapa = 0
+
+    while etapa < len(estrutura):
+        bloco = estrutura[etapa]
         if detalhado:
             print(f"[Etapa {etapa}] Posição: {cursor}, Suporte: {suporte}")
-        if bloco.categoria == Padrao.OPCIONAL:
+
+        if bloco.categoria == Padrao.REPETIDO:
+            prox = estrutura[etapa + 1] if etapa + 1 < len(estrutura) else None
+            if prox and prox.categoria == Padrao.INVERSO and prox.simbolo == bloco.simbolo:
+                count = 0
+                start = cursor
+                while cursor < len(entrada) and entrada[cursor] == bloco.simbolo:
+                    count += 1
+                    cursor += 1
+                if detalhado:
+                    print(f"Detectado {count} ocorrências consecutivas de '{bloco.simbolo}'")
+
+                metade = count // 2
+                if metade == 0:
+                    return False  # Não há nada para empilhar/desempilhar
+
+                for _ in range(metade):
+                    suporte.append(bloco.simbolo)
+                if detalhado:
+                    print(f"Empilhando {metade} símbolos de '{bloco.simbolo}'")
+
+                etapa += 1  # Pular também o INVERSO na sequência
+                if detalhado:
+                    print(f"[Etapa {etapa}] Posição: {cursor}, Suporte: {suporte}")
+                for _ in range(metade):
+                    if cursor >= len(entrada) or entrada[cursor] != bloco.simbolo:
+                        return False
+                    if detalhado:
+                        print(f"Desempilhando: {entrada[cursor]}")
+                    suporte.pop()
+                    cursor += 1
+                etapa += 1
+                continue
+            else:
+                while cursor < len(entrada) and entrada[cursor] == bloco.simbolo:
+                    if detalhado:
+                        print(f"Empilhando: {entrada[cursor]}")
+                    suporte.append(bloco.simbolo)
+                    cursor += 1
+        elif bloco.categoria == Padrao.INVERSO:
+            while suporte:
+                if cursor >= len(entrada) or entrada[cursor] != bloco.simbolo:
+                    return False
+                if detalhado:
+                    print(f"Desempilhando: {entrada[cursor]}")
+                suporte.pop()
+                cursor += 1
+        elif bloco.categoria == Padrao.OPCIONAL:
             while cursor < len(entrada) and entrada[cursor] == bloco.simbolo:
-                if detalhado: print(f"Analisando opcional: {entrada[cursor]}")
+                if detalhado:
+                    print(f"Analisando opcional: {entrada[cursor]}")
                 cursor += 1
         elif bloco.categoria == Padrao.MULTIPLO:
             if cursor >= len(entrada) or entrada[cursor] != bloco.simbolo:
                 return False
             while cursor < len(entrada) and entrada[cursor] == bloco.simbolo:
-                if detalhado: print(f"Analisando múltiplo: {entrada[cursor]}")
-                cursor += 1
-        elif bloco.categoria == Padrao.REPETIDO:
-            while cursor < len(entrada) and entrada[cursor] == bloco.simbolo:
-                if detalhado: print(f"Empilhando: {entrada[cursor]}")
-                suporte.append(bloco.simbolo)
-                cursor += 1
-        elif bloco.categoria == Padrao.INVERSO:
-            while suporte:
-                if cursor >= len(entrada) or entrada[cursor] != bloco.simbolo:
-                    return False
-                if detalhado: print(f"Desempilhando: {entrada[cursor]}")
-                suporte.pop()
+                if detalhado:
+                    print(f"Analisando múltiplo: {entrada[cursor]}")
                 cursor += 1
         elif bloco.categoria == Padrao.SIMPLES:
             if cursor >= len(entrada) or entrada[cursor] != bloco.simbolo:
                 return False
-            if detalhado: print(f"Analisando simples: {entrada[cursor]}")
+            if detalhado:
+                print(f"Analisando simples: {entrada[cursor]}")
             cursor += 1
+        etapa += 1
+
     if cursor == len(entrada):
-        if detalhado: print("✅ Análise concluída com sucesso!")
+        if detalhado:
+            print("✅ Análise concluída com sucesso!")
         return True
     else:
-        if detalhado: print("❌ Análise falhou!")
+        if detalhado:
+            print("❌ Análise falhou!")
         return False
 
 def gerar_diagrama(estrutura: List[Segmento], nome_saida='modelo_diagrama'): #gera um diagrama
